@@ -1,16 +1,17 @@
-import 'dart:io';
-
-import 'package:arabic_letters_game/first_letter_screen.dart';
+import 'package:arabic_letters_game/Keyboard/letter_screen.dart';
+import 'package:arabic_letters_game/main.dart';
+import 'package:arabic_letters_game/numbers/FirstNumberScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
 import 'dart:math';
 
-class FinalCelebrationScreen extends StatefulWidget {
+class FinalCelebrationsNumbers extends StatefulWidget {
   @override
-  _FinalCelebrationScreenState createState() => _FinalCelebrationScreenState();
+  _FinalCelebrationsNumbersState createState() =>
+      _FinalCelebrationsNumbersState();
 }
 
-class _FinalCelebrationScreenState extends State<FinalCelebrationScreen> {
+class _FinalCelebrationsNumbersState extends State<FinalCelebrationsNumbers> {
   late ConfettiController _confettiController;
 
   @override
@@ -70,7 +71,7 @@ class _FinalCelebrationScreenState extends State<FinalCelebrationScreen> {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    "لقد أنهيت جميع الحروف العربية!",
+                    "لقد أنهيت جميع الارقام العربية!",
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -86,34 +87,17 @@ class _FinalCelebrationScreenState extends State<FinalCelebrationScreen> {
                     runSpacing: 10,
                     children: [
                       for (var letter in [
-                        "أ",
-                        "ب",
-                        "ت",
-                        "ث",
-                        "ج",
-                        "ح",
-                        "خ",
-                        "د",
-                        "ذ",
-                        "ر",
-                        "ز",
-                        "س",
-                        "ش",
-                        "ص",
-                        "ض",
-                        "ط",
-                        "ظ",
-                        "ع",
-                        "غ",
-                        "ف",
-                        "ق",
-                        "ك",
-                        "ل",
-                        "م",
-                        "ن",
-                        "هـ",
-                        "و",
-                        "ي",
+                        "٠",
+                        "١",
+                        "٢",
+                        "٣",
+                        "٤",
+                        "٥",
+                        "٦",
+                        "٧",
+                        "٨",
+                        "٩",
+                        "١٠",
                       ])
                         Container(
                           padding: const EdgeInsets.all(12),
@@ -148,11 +132,17 @@ class _FinalCelebrationScreenState extends State<FinalCelebrationScreen> {
                     children: [
                       ElevatedButton.icon(
                         onPressed: () {
+                          // هنا يتم تصفير الكيبورد بشكل صحيح
+                          LetterScreen.completedLetters.clear();
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (_) =>
-                                  FirstLetterScreen(), // صفحة الحرف الأول
+                              builder: (_) => Firstnumberscreen(
+                                number:
+                                    Firstnumberscreen.lettersData[0]["number"]!,
+                                animal:
+                                    Firstnumberscreen.lettersData[0]["number"]!,
+                              ), // صفحة الرقم الأول
                             ),
                           );
                         },
@@ -173,7 +163,10 @@ class _FinalCelebrationScreenState extends State<FinalCelebrationScreen> {
                       const SizedBox(width: 20),
                       ElevatedButton.icon(
                         onPressed: () {
-                          exit(0);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (_) => SplashScreen()),
+                          );
                         },
                         icon: const Icon(
                           Icons.exit_to_app,

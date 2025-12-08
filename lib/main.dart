@@ -1,4 +1,5 @@
-import 'package:arabic_letters_game/first_letter_screen.dart';
+import 'package:arabic_letters_game/Keyboard/letter_screen.dart';
+import 'package:arabic_letters_game/numbers/FirstNumberScreen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,7 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'لعبة الأحرف العربية',
+      title: 'لعبة الأحرف والأرقام العربية',
       home: SplashScreen(),
     );
   }
@@ -20,20 +21,18 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightBlueAccent, // خلفية زاهية
+      backgroundColor: Colors.lightBlueAccent,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // أيقونة أو صورة ترحيبية
               Icon(Icons.brush, size: 120, color: Colors.white),
               SizedBox(height: 30),
 
-              // نص ترحيبي كبير
               Text(
-                "مرحبًا بك يا بطل 🎉",
+                "مرحبًا بكم يا أبطال 🎉",
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -44,31 +43,76 @@ class SplashScreen extends StatelessWidget {
               SizedBox(height: 15),
 
               Text(
-                "ستتعلم الأحرف العربية وتلوّنها بطريقة ممتعة 🎨",
+                "اختر ما تريد تعلمه: الأحرف أو الأرقام 🎨",
                 style: TextStyle(fontSize: 22, color: Colors.white),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 50),
 
-              // زر البداية الملون
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => FirstLetterScreen()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+              // صف فيه زرين
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // زر الأحرف
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => LetterScreen(
+                            letter: LetterScreen.lettersData[0]["letter"]!,
+                            animal: LetterScreen.lettersData[0]["animal"]!,
+                          ),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 30,
+                        vertical: 15,
+                      ),
+                      elevation: 8,
+                    ),
+                    child: Text(
+                      "تعلم الأحرف",
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  elevation: 8,
-                ),
-                child: Text(
-                  "ابدأ التعلم",
-                  style: TextStyle(fontSize: 24, color: Colors.white),
-                ),
+                  SizedBox(width: 20),
+
+                  // زر الأرقام
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (_) => Firstnumberscreen(
+                            number: Firstnumberscreen.lettersData[0]["number"]!,
+                            animal: Firstnumberscreen.lettersData[0]["number"]!,
+                          ),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 30,
+                        vertical: 15,
+                      ),
+                      elevation: 8,
+                    ),
+                    child: Text(
+                      "تعلم الأرقام",
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
