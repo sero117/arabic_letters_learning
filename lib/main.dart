@@ -53,9 +53,11 @@ class SplashScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // زر الأحرف
+                  // زر الأحرف من جديد
                   ElevatedButton(
                     onPressed: () {
+                      LetterScreen.completedLetters
+                          .clear(); // إعادة تعيين الإنجاز
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -72,26 +74,28 @@ class SplashScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(30),
                       ),
                       padding: EdgeInsets.symmetric(
-                        horizontal: 30,
+                        horizontal: 6,
                         vertical: 15,
                       ),
                       elevation: 8,
                     ),
                     child: Text(
-                      "تعلم الأحرف",
+                      "تعلم الأحرف من جديد",
                       style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
                   ),
                   SizedBox(width: 20),
 
-                  // زر الأرقام
+                  // زر الأرقام من جديد
                   ElevatedButton(
                     onPressed: () {
+                      FirstNumberScreen.completedNumbers
+                          .clear(); // إعادة تعيين الإنجاز
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
-                          builder: (_) => Firstnumberscreen(
-                            number: Firstnumberscreen.lettersData[0]["number"]!,
-                            animal: Firstnumberscreen.lettersData[0]["number"]!,
+                          builder: (_) => FirstNumberScreen(
+                            number: FirstNumberScreen.numbersData[0]["number"]!,
+                            animal: FirstNumberScreen.numbersData[0]["animal"]!,
                           ),
                         ),
                       );
@@ -102,17 +106,68 @@ class SplashScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(30),
                       ),
                       padding: EdgeInsets.symmetric(
-                        horizontal: 30,
+                        horizontal: 6,
                         vertical: 15,
                       ),
                       elevation: 8,
                     ),
                     child: Text(
-                      "تعلم الأرقام",
+                      "تعلم الأرقام من جديد",
                       style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
                   ),
                 ],
+              ),
+              SizedBox(height: 30),
+
+              // زر متابعة من حيث توقفت
+              ElevatedButton(
+                onPressed: () {
+                  // إذا كان هناك حروف مكتملة، نفتح أول حرف غير مكتمل
+                  if (LetterScreen.completedLetters.length <
+                      LetterScreen.lettersData.length) {
+                    final nextIndex = LetterScreen.completedLetters.length;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => LetterScreen(
+                          letter:
+                              LetterScreen.lettersData[nextIndex]["letter"]!,
+                          animal:
+                              LetterScreen.lettersData[nextIndex]["animal"]!,
+                        ),
+                      ),
+                    );
+                  }
+                  // إذا كان هناك أرقام مكتملة، نفتح أول رقم غير مكتمل
+                  else if (FirstNumberScreen.completedNumbers.length <
+                      FirstNumberScreen.numbersData.length) {
+                    final nextIndex = FirstNumberScreen.completedNumbers.length;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => FirstNumberScreen(
+                          number: FirstNumberScreen
+                              .numbersData[nextIndex]["number"]!,
+                          animal: FirstNumberScreen
+                              .numbersData[nextIndex]["animal"]!,
+                        ),
+                      ),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  elevation: 8,
+                ),
+                child: Text(
+                  "متابعة من حيث توقفت",
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
               ),
             ],
           ),

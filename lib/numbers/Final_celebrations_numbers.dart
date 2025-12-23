@@ -132,17 +132,18 @@ class _FinalCelebrationsNumbersState extends State<FinalCelebrationsNumbers> {
                     children: [
                       ElevatedButton.icon(
                         onPressed: () {
-                          // هنا يتم تصفير الكيبورد بشكل صحيح
-                          LetterScreen.completedLetters.clear();
+                          // تصفير الإنجاز للأرقام
+                          FirstNumberScreen.completedNumbers.clear();
+
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => Firstnumberscreen(
-                                number:
-                                    Firstnumberscreen.lettersData[0]["number"]!,
-                                animal:
-                                    Firstnumberscreen.lettersData[0]["number"]!,
-                              ), // صفحة الرقم الأول
+                              builder: (_) => FirstNumberScreen(
+                                number: FirstNumberScreen
+                                    .numbersData[0]["number"]!, // الرقم الأول
+                                animal: FirstNumberScreen
+                                    .numbersData[0]["animal"]!, // الحيوان المرتبط
+                              ),
                             ),
                           );
                         },

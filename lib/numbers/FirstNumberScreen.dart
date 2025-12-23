@@ -1,49 +1,51 @@
+import 'package:arabic_letters_game/main.dart';
 import 'package:arabic_letters_game/numbers/Final_celebrations_numbers.dart';
+import 'package:arabic_letters_game/widgets/arabicnumber.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-class Firstnumberscreen extends StatefulWidget {
+class FirstNumberScreen extends StatefulWidget {
   final String number;
   final String animal;
 
-  const Firstnumberscreen({
+  const FirstNumberScreen({
     Key? key,
     required this.number,
     required this.animal,
   }) : super(key: key);
 
-  // القائمة الكاملة للحروف مع الحيوانات
-  static final List<Map<String, String>> lettersData = [
+  // قائمة الأرقام مع الحيوانات/الرموز
+  static final List<Map<String, String>> numbersData = [
     {"number": "٠", "animal": ""},
-    {"number": "١", "animal": " 🍎"},
+    {"number": "١", "animal": "🍎"},
     {"number": "٢", "animal": "🍎🍎"},
     {"number": "٣", "animal": "🍎🍎🍎"},
     {"number": "٤", "animal": "🍎🍎🍎🍎"},
-    {"number": "٥", "animal": "🍎🍎🍎 🍎🍎"},
-    {"number": "٦", "animal": "🍎🍎🍎 🍎🍎🍎"},
-    {"number": "٧", "animal": "🍎🍎🍎 🍎🍎🍎 🍎"},
-    {"number": "٨", "animal": "🍎🍎🍎 🍎🍎🍎 🍎🍎"},
-    {"number": "٩", "animal": "🍎🍎🍎 🍎🍎🍎 🍎🍎🍎"},
+    {"number": "٥", "animal": "🍎🍎🍎🍎🍎"},
+    {"number": "٦", "animal": "🍎🍎🍎🍎🍎🍎"},
+    {"number": "٧", "animal": "🍎🍎🍎🍎🍎🍎🍎"},
+    {"number": "٨", "animal": "🍎🍎🍎🍎🍎🍎🍎🍎"},
+    {"number": "٩", "animal": "🍎🍎🍎🍎🍎🍎🍎🍎🍎"},
     {"number": "١٠", "animal": "🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎"},
   ];
 
+  static Set<String> completedNumbers = {};
+
   @override
-  State<Firstnumberscreen> createState() => _FirstnumberscreenState();
+  State<FirstNumberScreen> createState() => _FirstNumberScreenState();
 }
 
-class _FirstnumberscreenState extends State<Firstnumberscreen> {
+class _FirstNumberScreenState extends State<FirstNumberScreen> {
   Color selectedColor = Colors.red;
   List<ColoredPoint> brushStrokes = [];
   int strokesSinceLastDialog = 0;
-
-  static Set<String> completedLetters = {}; // الحروف المكتملة
+  bool showColors = false;
 
   @override
   Widget build(BuildContext context) {
-    final double letterSize = MediaQuery.of(context).size.width * 3.8;
-    int currentIndex = Firstnumberscreen.lettersData.indexWhere(
-      (l) => l["number"] == widget.number,
+    int currentIndex = FirstNumberScreen.numbersData.indexWhere(
+      (n) => n["number"] == widget.number,
     );
 
     return Scaffold(
@@ -51,44 +53,59 @@ class _FirstnumberscreenState extends State<Firstnumberscreen> {
         title: Text("الرقم ${widget.number}"),
         backgroundColor: Colors.lightBlueAccent,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: currentIndex > 0
+              ? () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => FirstNumberScreen(
+                        number: FirstNumberScreen
+                            .numbersData[currentIndex - 1]["number"]!,
+                        animal: FirstNumberScreen
+                            .numbersData[currentIndex - 1]["animal"]!,
+                      ),
+                    ),
+                  );
+                }
+              : null,
+        ),
         actions: [
+          // زر التالي
           IconButton(
-            icon: const Icon(Icons.keyboard),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (_) => const ArabicKeyboardDialog(),
-              );
-            },
+            icon: const Icon(Icons.arrow_forward),
+            onPressed: currentIndex + 1 < FirstNumberScreen.numbersData.length
+                ? () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => FirstNumberScreen(
+                          number: FirstNumberScreen
+                              .numbersData[currentIndex + 1]["letter"]!,
+                          animal: FirstNumberScreen
+                              .numbersData[currentIndex + 1]["animal"]!,
+                        ),
+                      ),
+                    );
+                  }
+                : null,
+          ),
+          IconButton(
+            icon: const Icon(Icons.outbox_outlined),
+            onPressed: currentIndex + 1 < FirstNumberScreen.numbersData.length
+                ? () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => SplashScreen()),
+                    );
+                  }
+                : null,
           ),
         ],
       ),
-      body: Row(
+      body: Column(
         children: [
-          // القائمة الجانبية للألوان والفرشاة
-          Container(
-            width: 80,
-            color: Colors.grey.shade200,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _colorButton(Colors.red),
-                _colorButton(Colors.blue),
-                _colorButton(Colors.green),
-                _colorButton(Colors.orange),
-                _colorButton(Colors.purple),
-                _colorButton(Colors.yellow),
-                _colorButton(Colors.pink),
-                _colorButton(Colors.brown),
-                _colorButton(Colors.cyan),
-                _colorButton(Colors.teal),
-                _colorButton(Colors.black),
-                const SizedBox(height: 20),
-                Icon(Icons.brush, size: 40, color: selectedColor),
-              ],
-            ),
-          ),
-
           // منطقة التلوين
           Expanded(
             child: Stack(
@@ -96,16 +113,21 @@ class _FirstnumberscreenState extends State<Firstnumberscreen> {
                 Center(
                   child: SvgPicture.string(
                     '''
-<svg xmlns="http://www.w3.org/5000/svg" width="200%" height="200%" viewBox="0 0 1000 1000">
-  <text x="50%" y="70%" text-anchor="middle" dominant-baseline="middle"
-        font-family="Amiri" font-size="800"
-        fill="none" stroke="black" stroke-width="10">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="100%" height="100%">
+  <text x="50%" y="60%"
+        text-anchor="middle"
+        dominant-baseline="middle"
+        font-size="800"
+        font-family="sans-serif"
+        fill="none"
+        stroke="black"
+        stroke-width="4">
     ${widget.number}
   </text>
 </svg>
 ''',
-                    width: letterSize,
-                    height: letterSize,
+                    width: MediaQuery.of(context).size.width * 2.0,
+                    height: MediaQuery.of(context).size.width * 2.0,
                   ),
                 ),
                 GestureDetector(
@@ -115,9 +137,9 @@ class _FirstnumberscreenState extends State<Firstnumberscreen> {
                         ColoredPoint(details.localPosition, selectedColor),
                       );
                       strokesSinceLastDialog++;
-                      if (strokesSinceLastDialog > 150) {
+                      if (strokesSinceLastDialog > 200) {
                         strokesSinceLastDialog = 0;
-                        completedLetters.add(widget.number); // طمس الحرف
+                        FirstNumberScreen.completedNumbers.add(widget.number);
                         _showSuccessDialog(currentIndex);
                       }
                     });
@@ -133,13 +155,79 @@ class _FirstnumberscreenState extends State<Firstnumberscreen> {
               ],
             ),
           ),
+          ArabicNumbersKeyboardWidget(
+            onSelect: (letter, animal) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      FirstNumberScreen(number: letter, animal: animal),
+                ),
+              );
+            },
+          ),
+
+          // شريط الألوان بالأسفل مع السحب
+          Container(
+            padding: const EdgeInsets.all(10),
+            color: Colors.grey.shade200,
+            child: Row(
+              children: [
+                // اللون الحالي
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: selectedColor,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.black, width: 2),
+                  ),
+                ),
+                const SizedBox(width: 20),
+
+                // أيقونة الفرشاة
+                IconButton(
+                  icon: Icon(Icons.brush, size: 40, color: selectedColor),
+                  onPressed: () {
+                    setState(() {
+                      showColors = !showColors;
+                    });
+                  },
+                ),
+
+                // باقي الألوان داخل Scroll أفقي
+                if (showColors)
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _colorButton(Colors.red),
+                          _colorButton(Colors.blue),
+                          _colorButton(Colors.green),
+                          _colorButton(Colors.orange),
+                          _colorButton(Colors.purple),
+                          _colorButton(Colors.yellow),
+                          _colorButton(Colors.pink),
+                          _colorButton(Colors.brown),
+                          _colorButton(Colors.cyan),
+                          _colorButton(Colors.teal),
+                          _colorButton(Colors.black),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
   void _showSuccessDialog(int currentIndex) {
-    if (completedLetters.length == Firstnumberscreen.lettersData.length) {
+    if (FirstNumberScreen.completedNumbers.length ==
+        FirstNumberScreen.numbersData.length) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => FinalCelebrationsNumbers()),
@@ -155,8 +243,8 @@ class _FirstnumberscreenState extends State<Firstnumberscreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              widget.number.split(" ").last,
-              style: const TextStyle(fontSize: 40),
+              widget.number,
+              style: const TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             Text(
@@ -168,15 +256,15 @@ class _FirstnumberscreenState extends State<Firstnumberscreen> {
         actions: [
           TextButton(
             onPressed: () {
-              if (currentIndex + 1 < Firstnumberscreen.lettersData.length) {
+              if (currentIndex + 1 < FirstNumberScreen.numbersData.length) {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => Firstnumberscreen(
-                      number: Firstnumberscreen
-                          .lettersData[currentIndex + 1]["number"]!,
-                      animal: Firstnumberscreen
-                          .lettersData[currentIndex + 1]["animal"]!,
+                    builder: (_) => FirstNumberScreen(
+                      number: FirstNumberScreen
+                          .numbersData[currentIndex + 1]["number"]!,
+                      animal: FirstNumberScreen
+                          .numbersData[currentIndex + 1]["animal"]!,
                     ),
                   ),
                 );
@@ -193,17 +281,20 @@ class _FirstnumberscreenState extends State<Firstnumberscreen> {
 
   Widget _colorButton(Color color) {
     return GestureDetector(
-      onTap: () => setState(() => selectedColor = color),
+      onTap: () => setState(() {
+        selectedColor = color;
+        showColors = false;
+      }),
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 5),
-        width: 40,
-        height: 40,
+        margin: const EdgeInsets.symmetric(horizontal: 5),
+        width: 30,
+        height: 30,
         decoration: BoxDecoration(
           color: color,
           shape: BoxShape.circle,
           border: Border.all(
             color: selectedColor == color ? Colors.black : Colors.transparent,
-            width: 3,
+            width: 2,
           ),
         ),
       ),
@@ -223,15 +314,12 @@ class BrushPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    for (int i = 0; i < points.length - 1; i++) {
-      final p1 = points[i];
-      final p2 = points[i + 1];
-      if (p1.offset != Offset.zero && p2.offset != Offset.zero) {
+    for (var p in points) {
+      if (p.offset != Offset.zero) {
         final paint = Paint()
-          ..color = p1.color.withOpacity(0.6)
-          ..strokeCap = StrokeCap.round
-          ..strokeWidth = 25;
-        canvas.drawLine(p1.offset, p2.offset, paint);
+          ..color = p.color.withOpacity(0.6)
+          ..style = PaintingStyle.fill;
+        canvas.drawCircle(p.offset, 15, paint); // نقاط للتلوين اليدوي
       }
     }
   }
@@ -258,9 +346,9 @@ class _ArabicKeyboardDialogState extends State<ArabicKeyboardDialog> {
     _tts.setSpeechRate(0.5);
   }
 
-  Future<void> _speakLetter(String letter) async {
+  Future<void> _speakNumber(String number) async {
     await _tts.stop();
-    await _tts.speak(letter);
+    await _tts.speak(number);
   }
 
   @override
@@ -276,23 +364,24 @@ class _ArabicKeyboardDialogState extends State<ArabicKeyboardDialog> {
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
           ),
-          itemCount: Firstnumberscreen.lettersData.length,
+          itemCount: FirstNumberScreen.numbersData.length,
           itemBuilder: (context, index) {
-            final letter = Firstnumberscreen.lettersData[index]["number"]!;
-            final animal = Firstnumberscreen.lettersData[index]["animal"]!;
-            final isCompleted = _FirstnumberscreenState.completedLetters
-                .contains(letter);
+            final number = FirstNumberScreen.numbersData[index]["number"]!;
+            final animal = FirstNumberScreen.numbersData[index]["animal"]!;
+            final isCompleted = FirstNumberScreen.completedNumbers.contains(
+              number,
+            );
 
             return InkWell(
               onTap: isCompleted
                   ? null
                   : () async {
-                      await _speakLetter(letter);
+                      await _speakNumber(number);
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (_) =>
-                              Firstnumberscreen(number: letter, animal: animal),
+                              FirstNumberScreen(number: number, animal: animal),
                         ),
                       );
                     },
@@ -305,7 +394,7 @@ class _ArabicKeyboardDialogState extends State<ArabicKeyboardDialog> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  letter,
+                  number,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,

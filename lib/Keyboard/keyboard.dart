@@ -87,7 +87,7 @@ class _ArabicKeyboardDialogState extends State<ArabicKeyboardDialog> {
               child: Container(
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: Colors.purple[100],
+                  color: Colors.blue[100],
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
